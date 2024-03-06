@@ -4,31 +4,51 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class randomMap {
 
+    // main functions + navigation in the menu
     public static void main(String[] args)
     {
         // active duty map pool
         String admp_path = "/home/paul/IdeaProjects/cs_map_randomizer/src/data/active_duty_map_pool";
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+        do {
+            displayMenu();
+            System.out.println("\nPlease enter a valid number to navigate in the menu.");
+            choice = scanner.nextInt();
+            try {
+                switch (choice) {
+                    case 1:
+                        List<String> lines = readLineFromFile(admp_path);
+                        if (!admp_path.isEmpty()) {
+                            String randomLine = getRandomLine(lines);
+                            System.out.println("The randomized map is: " + randomLine);
+                        } else {
+                            System.out.println("empty file");
+                        }
+                        break;
+                    case 2:
+                        System.out.println("exit program");
+                        break;
+                    default:
+                        System.out.println("input invalid");
+                }
 
-        try
-        {
-            List<String> lines = readLineFromFile(admp_path);
-            if (!admp_path.isEmpty())
-            {
-                String randomLine = getRandomLine(lines);
-                System.out.println("The randomized map is: " + randomLine);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InputMismatchException e) {
+                System.out.println("please enter an integer");
+                scanner.nextLine();
+                choice = -1;
             }
-            else
-            {
-                System.out.println("File is empty");
-            }
-
         }
-        catch (IOException e)
+        while (choice != 2) ;
         {
-            e.printStackTrace();
+            scanner.close();
         }
     }
 
@@ -50,5 +70,12 @@ public class randomMap {
         Random random = new Random();
         int randomIndex = random.nextInt(lines.size());
         return lines.get(randomIndex);
+    }
+
+    private static void displayMenu()
+    {
+        System.out.println("\nMenü: ");
+        System.out.println("[1.] generate random map");
+        System.out.println("[2.] exit program");
     }
 }
